@@ -1,0 +1,29 @@
+services:
+  # 1. THE FASTAPI BACKEND
+  - type: web
+    name: stressbud-backend
+    env: python
+    buildCommand: pip install -r requirements.txt
+    # Render assigns a dynamic port, so we use $PORT instead of 8000
+    startCommand: uvicorn backend.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: GEMINI_API_KEY_1
+        sync: false # This tells Render to look in your secure dashboard vault for the key
+      - key: GEMINI_API_KEY_2
+        sync: false
+      - key: GEMINI_API_KEY_3
+        sync: false
+
+  # 2. THE STREAMLIT FRONTEND
+  - type: web
+    name: stressbud-frontend
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: streamlit run app.py --server.port $PORT --server.address 0.0.0.0
+    envVars:
+      # This dynamically passes the live backend URL to your frontend!
+      - key: API_BASE_URL
+        fromService:
+          name: stressbud-backend
+          type: web
+          property: host
