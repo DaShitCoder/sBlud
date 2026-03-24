@@ -1,9 +1,11 @@
 import streamlit as st
 import requests
 from firebase_auth_component import firebase_auth_button
+import os
 
-API_URL = "http://127.0.0.1:8000/api/chat"
-SOS_API_URL = "http://127.0.0.1:8000/api/sos-chat"
+BASE_URL = os.environ.get("API_BASE_URL", "127.0.0.1:8000")
+API_URL = f"https://{BASE_URL}/api/chat" if "onrender.com" in BASE_URL else f"http://{BASE_URL}/api/chat"
+SOS_API_URL = f"https://{BASE_URL}/api/sos-chat" if "onrender.com" in BASE_URL else f"http://{BASE_URL}/api/sos-chat"
 
 st.set_page_config(page_title="StressBud", page_icon="🌱", layout="centered")
 
